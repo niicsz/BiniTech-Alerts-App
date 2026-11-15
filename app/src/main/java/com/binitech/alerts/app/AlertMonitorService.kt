@@ -102,7 +102,7 @@ class AlertMonitorService : Service() {
             handler.post {
                 lastEventAt = SystemClock.elapsedRealtime()
                 if (type == "alert" || type == "update") {
-                    handle(type, AlertItem.from(JSONObject(data)))
+                    runCatching { AlertItem.from(JSONObject(data)) }.onSuccess { handle(type, it) }
                 }
             }
         }

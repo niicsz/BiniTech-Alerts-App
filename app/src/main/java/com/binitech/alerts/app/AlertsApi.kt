@@ -26,7 +26,7 @@ class AlertsApi(private val baseUrl: String, private val token: String) {
     }
 
     fun acknowledge(id: String): AlertItem =
-        AlertItem.from(JSONObject(execute(request("/api/alerts/$id/ack").post(EMPTY).build())))
+        AlertItem.from(JSONObject(execute(request("/api/alerts/${java.net.URLEncoder.encode(id, "UTF-8").replace("+", "%20")}/ack").post(EMPTY).build())))
 
     fun sendTest(): AlertItem =
         AlertItem.from(JSONObject(execute(request("/api/alerts/test").post(EMPTY).build())))

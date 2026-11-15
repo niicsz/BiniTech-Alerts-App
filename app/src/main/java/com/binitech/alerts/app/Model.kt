@@ -97,8 +97,17 @@ class Settings(context: Context) {
         set(value) = prefs.edit().putString("serverUrl", value.trim().trimEnd('/')).apply()
 
     var token: String
-        get() = prefs.getString("token", "") ?: ""
-        set(value) = prefs.edit().putString("token", value.trim()).apply()
+        get() {
+            prefs.getString("token", null)?.let { legacy ->
+                token = legacy
+                return legacy.trim()
+            }
+            return prefs.getString("tokenSealed", null)?.let(TokenCipher::decrypt).orEmpty()
+        }
+        set(value) = prefs.edit()
+            .putString("tokenSealed", TokenCipher.encrypt(value.trim()))
+            .remove("token")
+            .apply()
 
     var monitoring: Boolean
         get() = prefs.getBoolean("monitoring", false)
